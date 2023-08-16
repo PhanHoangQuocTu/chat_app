@@ -11,6 +11,16 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.0"
   },
+  "devDependencies": {
+    "@ant-design/icons": "^5.2.5",
+    "antd": "^5.8.2",
+    "date-fns": "^2.30.0",
+    "firebase": "^10.1.0",
+    "lodash": "^4.17.21",
+    "react-router-dom": "^6.14.2",
+    "sass": "^1.65.1",
+    "styled-components": "^6.0.7"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
