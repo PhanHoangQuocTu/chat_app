@@ -1,9 +1,10 @@
 import { Avatar, Button, Typography } from "antd";
 import { styled } from "styled-components";
-import { signOut} from 'firebase/auth'
-import { auth, db } from "../../../../firebase/config";
-import { useEffect } from "react";
-import { onSnapshot, collection } from "firebase/firestore";
+import { signOut } from 'firebase/auth'
+import { auth } from "../../../../firebase/config";
+import { useContext } from "react";
+import { AuthContext } from '../../../../Context/AuthProvider'
+
 const WrapperStyled = styled.div`
     display: flex;
     justify-content: space-between;
@@ -21,21 +22,16 @@ const handleSignOut = () => {
 }
 
 function UserInfo() {
-    useEffect(() => {
-        onSnapshot(collection(db, 'users'), (snapshot) => {
-            const data = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }))
-
-            console.log({data, snapshot, docs: snapshot.docs})
-        })
-    }, [])
+    const {user: {
+        displayName,
+        photoURL,
+    }} = useContext(AuthContext);
+    
     return (
         <WrapperStyled>
             <div>
-                <Avatar>A</Avatar>
-                <Typography.Text className="username">Name</Typography.Text>
+                <Avatar src={photoURL}>{photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}</Avatar>
+                <Typography.Text className="username">{displayName}</Typography.Text>
             </div>
             <Button ghost onClick={handleSignOut}>Đăng xuất</Button>
         </WrapperStyled>
