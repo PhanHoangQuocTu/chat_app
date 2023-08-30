@@ -1,7 +1,7 @@
 import { Row, Col, Button, Typography } from 'antd';
 import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase/config';
-import { addDocument } from '../../firebase/services';
+import { addDocument, checkExistAccount, generateKeywords } from '../../firebase/services';
 
 const { Title } = Typography
 
@@ -9,20 +9,37 @@ const fbProvider = new FacebookAuthProvider()
 const ggProvider = new GoogleAuthProvider();
 function Login() {
     const handleFbLogin = async () => {
-        const data = await signInWithPopup(auth, fbProvider);
-        console.log({ data });
+        const { user }  = await signInWithPopup(auth, fbProvider);
+        
+        const isExist = await checkExistAccount('users', user.uid);
+        //add new user to firestore
+        if(!isExist){
+            await addDocument('users', {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                uid: user.uid,
+                providerId: user.providerId
+            })
+        }
     }
 
     const handleGgLogin = async () => {
+        //sign in
         const { user } = await signInWithPopup(auth, ggProvider);
-        await addDocument('users', {
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-            uid: user.uid,
-            providerId: user.providerId
-        }, user.uid)
-        console.log(user);
+
+        const isExist = await checkExistAccount('users', user.uid);
+        //add new user to firestore
+        if(!isExist){
+            await addDocument('users', {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                uid: user.uid,
+                providerId: user.providerId,
+                keywords: generateKeywords(user.displayName)
+            })
+        }
     }
 
     return (

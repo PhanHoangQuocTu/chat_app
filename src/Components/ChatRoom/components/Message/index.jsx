@@ -1,4 +1,5 @@
 import { Avatar, Typography } from "antd";
+import { formatRelative } from "date-fns/esm";
 import { styled } from "styled-components";
 
 const WrapperStyled = styled.div`
@@ -20,13 +21,24 @@ const WrapperStyled = styled.div`
     }
 `
 
+function formatData(seconds) {
+    let formattedDate = '';
+    if (seconds) {
+        formattedDate = formatRelative(new Date(seconds * 1000), new Date());
+
+        formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+        return formattedDate;
+    }
+}
+
 function Message({ text, displayName, createAt, photoURL }) {
     return (
         <WrapperStyled>
             <div>
-                <Avatar size={'small'} src={photoURL}>A</Avatar>
+                <Avatar size={'small'} src={photoURL}>{photoURL ? '' : displayName?.charAt(0)?.toUpperCase()}</Avatar>
                 <Typography.Text className="author">{displayName}</Typography.Text>
-                <Typography.Text className="date">{createAt}</Typography.Text>
+                <Typography.Text className="date">{formatData(createAt?.seconds)}</Typography.Text>
             </div>
             <div>
                 <Typography.Text className="content">{text}</Typography.Text>
